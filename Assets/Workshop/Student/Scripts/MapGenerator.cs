@@ -19,27 +19,80 @@ namespace Workshop.Student
         };
 
         // 1. declare Players variable
+        public GameObject PlayerTile;
+
+        //2. declare obstacles variable
+        public GameObject obstaclesTile;
 
         // 7. declare Exit variable 
+        public GameObject ExitTile;
 
 
         public void Start()
         {
-            // 1. random player at the position <0, 0> map
+            // 1. random player at the position <0, 0> map อยู่จุดเริ่มต้น
+            Instantiate(PlayerTile, new Vector2(0,0), Quaternion.identity);
 
-            // 2. create obstacles
+            // 2. create obstacles อยู่ตรงกลาง Wall ครึ่งนึง
+            for (int i = -1; i < rows/2; i++)
+            {
+                Instantiate(obstaclesTile, new Vector2(columns/2, i), Quaternion.identity);
+            }
 
             // 3. create floor
+            for (int y = 0; y < rows; y++)
+            {
+                for (int x = 0; x < columns; x++)
+                {
+                    int r = UnityEngine.Random.Range(0, floorTiles.Length);
+                    GameObject tile = Instantiate(floorTiles[r], new Vector2(x, y), Quaternion.identity);
+                    tile.name = "Floor" + x + "_" + y;
+                }
+            }
 
             // 4. create walls
+            for (int y = -1; y < rows + 1; y++)
+            {
+                for (int x = -1; x < columns + 1; x++)
+                {
+                    int r = UnityEngine.Random.Range(0, wallTiles.Length);
+                    GameObject tile = Instantiate(wallTiles[r], new Vector2(x, y), Quaternion.identity);
+                    tile.name = "Floor" + x + "_" + y;
+                }
+            }
 
             // 5. random foods
+            int numberOfFoods = UnityEngine.Random.Range(1,4);
+            for (int i = 0; i < numberOfFoods; i++)
+            {
+                int x_Food = UnityEngine.Random.Range(0, columns);
+                int y_Food = UnityEngine.Random.Range(0, rows);
+                int r = UnityEngine.Random.Range(0,foodTiles.Length);
+                Instantiate(foodTiles[0], new Vector2(x_Food, y_Food), Quaternion.identity);
+            }
+            
 
             // 6. generate item along with the saveItemMap
+            for (int y = 0; y < saveItemMap.GetLength(0); y++)
+            {
+                for (int x = 0; x < saveItemMap.GetLength(1); x++)
+                {
+                    string item = saveItemMap[x, y];
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        foreach (var foodTile in foodTiles)
+                        {
+                            if (foodTile.name == item)
+                            {
+                                Instantiate(foodTile, new Vector2(x, y), Quaternion.identity);
+                            }
+                        }
+                    }
+                }
+            }
 
-            // 7. place exit
-
+            // 7. place exit อยู่ขวาบนสุด
+            Instantiate(ExitTile, new Vector2(columns-1, rows-1), Quaternion.identity);
         }
     }
-
 }
